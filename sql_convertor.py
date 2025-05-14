@@ -20,7 +20,7 @@ def dataframe_to_sql(df, table_name):
     sql = f"CREATE TABLE {table_name} (\n"
     for col in df.columns:
         col_type = infer_sql_type(df[col].dtype)
-        sql += f"  `{col}` {col_type},\n"
+        sql += f"  {col} {col_type},\n"
     sql = sql.rstrip(",\n") + "\n);\n\n"
 
     for _, row in df.iterrows():
@@ -28,8 +28,6 @@ def dataframe_to_sql(df, table_name):
         for val in row:
             if pd.isna(val):
                 values.append("NULL")
-            elif isinstance(val, pd.Timestamp):
-                values.append("'" + val.strftime("%Y/%m/%d") + "'")
             elif isinstance(val, str):
                 values.append("'" + val.replace("'", "''") + "'")
             else:
@@ -38,7 +36,7 @@ def dataframe_to_sql(df, table_name):
     return sql
 
 # --- Streamlit UI ---
-st.title("🛠️ My Converter")
+st.title(" My Converter")
 
 uploaded_file = st.file_uploader("Upload a CSV, Excel, or ODS file", type=["csv", "xlsx", "ods"])
 table_name = st.text_input("Enter SQL Table Name", value="my_table")
@@ -54,7 +52,6 @@ if uploaded_file and table_name:
             df = pd.read_excel(uploaded_file, engine='odf')
         else:
             st.error("Unsupported file format")
-            st.stop()
 
         st.subheader("📋 Preview Data")
         st.dataframe(df.head())
@@ -65,7 +62,7 @@ if uploaded_file and table_name:
         st.subheader("📝 SQL Output")
         st.code(sql_code[:1000] + ("..." if len(sql_code) > 1000 else ""), language="sql")
 
-        # --- Download SQL ---
+        # Download Button
         sql_bytes = io.BytesIO(sql_code.encode("utf-8"))
         st.download_button(
             label="📥 Download SQL File",
@@ -74,7 +71,7 @@ if uploaded_file and table_name:
             mime="text/sql"
         )
 
-        # --- Download CSV ---
+    # --- Download CSV ---
         csv_bytes = io.BytesIO()
         df.to_csv(csv_bytes, index=False)
         csv_bytes.seek(0)
@@ -86,4 +83,4 @@ if uploaded_file and table_name:
         )
 
     except Exception as e:
-        st.error(f"❌ Error: {e}")
+        st.error(f"❌ Error: {e}") 
