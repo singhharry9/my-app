@@ -30,6 +30,8 @@ def dataframe_to_sql(df, table_name):
                 values.append("NULL")
             elif isinstance(val, str):
                 values.append("'" + val.replace("'", "''") + "'")
+            elif isinstance(val, pd.Timestamp):  # 🔄 CHANGED: Convert datetime to YYYY-MM-DD
+                values.append(f"'{val.date()}'")
             else:
                 values.append(str(val))
         sql += f"INSERT INTO {table_name} VALUES ({', '.join(values)});\n"
@@ -53,6 +55,10 @@ if uploaded_file and table_name:
         else:
             st.error("Unsupported file format")
 
+        # 🔄 CHANGED: Display date-only format in Streamlit preview
+        for col in df.select_dtypes(include=['datetime64[ns]']):
+            df[col] = df[col].dt.date
+
         st.subheader("📋 Preview Data")
         st.dataframe(df.head())
 
@@ -71,7 +77,7 @@ if uploaded_file and table_name:
             mime="text/sql"
         )
 
-    # --- Download CSV ---
+        # --- Download CSV ---
         csv_bytes = io.BytesIO()
         df.to_csv(csv_bytes, index=False)
         csv_bytes.seek(0)
@@ -83,4 +89,4 @@ if uploaded_file and table_name:
         )
 
     except Exception as e:
-        st.error(f"❌ Error: {e}") 
+        st.error(f"❌ Error: {e}")
