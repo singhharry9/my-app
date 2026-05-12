@@ -9,7 +9,7 @@ import pandas as pd
 import pymysql
 import streamlit as st
 
-st.set_page_config(page_title="AI-Assisted Schema Anomaly Advisor", layout="wide")
+st.set_page_config(page_title="AI-Assisted Schema Anomaly Detector", layout="wide")
 
 st.title("AI-Assisted Schema Anomaly Advisor")
 st.caption("Read-only MySQL scanner with AI DBA summary and risk guidance")
