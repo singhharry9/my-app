@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any
 
 
-APP_TITLE = "Nested JSON Table Agent"
+APP_TITLE = "Nested JSON Agent"
 
 IDENTIFIER_RE = re.compile(r"[^0-9a-zA-Z_]+")
 INTEGER_RE = re.compile(r"^[+-]?\d+$")
